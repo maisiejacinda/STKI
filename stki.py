@@ -37,7 +37,7 @@ class IndoBERT_CNN_LSTM(nn.Module):
             outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask)
         x = outputs.last_hidden_state
         x = x.permute(0, 2, 1)
-        x = self.conv1(x)
+        x = self.conv(x)
         x = x.permute(0, 2, 1)
         _, (h_n, _) = self.lstm(x)
         logits = self.fc(h_n.squeeze(0))
