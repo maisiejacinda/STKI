@@ -3,18 +3,11 @@ import torch
 from transformers import BertTokenizer, BertModel
 import torch.nn as nn
 import re
-import os
-import gdown
 import traceback
 
-# === GANTI DENGAN FILE ID MODEL DI GOOGLE DRIVE ===
-MODEL_FILE_ID = "MASUKKAN_FILE_ID_DISINI"  # <-- GANTI BAGIAN INI
-
-def download_model_from_drive(file_id, destination):
-    if os.path.exists(destination):
-        return
-    gdown.download(f"https://drive.google.com/uc?id={file_id}", destination, quiet=False)
-
+# ============================
+# Text Cleaning
+# ============================
 def clean_text(text):
     text = text.lower()
     text = re.sub(r"http\S+|www.\S+", '', text)
@@ -23,6 +16,9 @@ def clean_text(text):
     text = re.sub(r"\s+", ' ', text).strip()
     return text
 
+# ============================
+# Model Class
+# ============================
 class IndoBERT_CNN_LSTM(nn.Module):
     def __init__(self, bert_model):
         super().__init__()
@@ -32,7 +28,7 @@ class IndoBERT_CNN_LSTM(nn.Module):
         self.fc = nn.Linear(64, 2)
 
     def forward(self, input_ids, attention_mask):
-        with torch.no_grad():  # Freeze BERT
+        with torch.no_grad():  
             outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask)
         x = outputs.last_hidden_state
         x = x.permute(0, 2, 1)
@@ -42,6 +38,9 @@ class IndoBERT_CNN_LSTM(nn.Module):
         logits = self.fc(h_n.squeeze(0))
         return logits
 
+# ============================
+# Streamlit UI
+# ============================
 st.set_page_config(page_title="Deteksi Ujaran Kebencian TikTok", layout="wide")
 st.title("💬🔥 Deteksi Ujaran Kebencian pada Komentar TikTok")
 
@@ -51,11 +50,8 @@ if st.button("🔍 Deteksi"):
     try:
         device = torch.device("cpu")
 
-        # Download model jika belum ada
-        download_model_from_drive(MODEL_FILE_ID, "model_hatespeech.pt")
-
-        bert_model = BertModel.from_pretrained('indobenchmark/indobert-base-p1').to(device)
         tokenizer = BertTokenizer.from_pretrained('indobenchmark/indobert-base-p1')
+        bert_model = BertModel.from_pretrained('indobenchmark/indobert-base-p1').to(device)
 
         model = IndoBERT_CNN_LSTM(bert_model)
         model.load_state_dict(torch.load("model_hatespeech.pt", map_location=device))
