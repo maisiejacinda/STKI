@@ -1,6 +1,4 @@
 torch
 transformers
 gdown
-pandas
-numpy
-scikit-learn
+streamlit
