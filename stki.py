@@ -8,7 +8,7 @@ import gdown
 import traceback
 
 # === FILE ID MODEL DARI GOOGLE DRIVE ===
-MODEL_FILE_ID = "MODEL_FILE_ID = "1Y2vi6ewS1_-kUlA5IguonUrBvS2_oEDd"
+MODEL_FILE_ID = "1Y2vi6ewS1_-kUlA5IguonUrBvS2_oEDd"
 MODEL_PATH = "model_hatespeech.pt"
 
 def download_model_from_drive(file_id, destination):
