@@ -28,7 +28,7 @@ class IndoBERT_CNN_LSTM(nn.Module):
     def __init__(self, bert_model):
         super().__init__()
         self.bert = bert_model
-        self.conv1 = nn.Conv1d(768, 128, kernel_size=3, padding=1)
+        self.conv = nn.Conv1d(768, 128, kernel_size=3, padding=1)
         self.lstm = nn.LSTM(128, 64, batch_first=True)
         self.fc = nn.Linear(64, 2)
 
