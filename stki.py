@@ -8,7 +8,7 @@ import gdown
 import traceback
 
 # === GANTI DENGAN FILE ID MODEL DI GOOGLE DRIVE ===
-MODEL_FILE_ID = "YOUR_MODEL_FILE_ID_HERE"  # <- Ganti ini
+MODEL_FILE_ID = "MASUKKAN_FILE_ID_DISINI"  # <-- GANTI BAGIAN INI
 
 def download_model_from_drive(file_id, destination):
     if os.path.exists(destination):
@@ -32,7 +32,7 @@ class IndoBERT_CNN_LSTM(nn.Module):
         self.fc = nn.Linear(64, 2)
 
     def forward(self, input_ids, attention_mask):
-        with torch.no_grad():
+        with torch.no_grad():  # Freeze BERT
             outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask)
         x = outputs.last_hidden_state
         x = x.permute(0, 2, 1)
@@ -44,9 +44,8 @@ class IndoBERT_CNN_LSTM(nn.Module):
 
 st.set_page_config(page_title="Deteksi Ujaran Kebencian TikTok", layout="wide")
 st.title("💬🔥 Deteksi Ujaran Kebencian pada Komentar TikTok")
-st.markdown("Masukkan komentar TikTok di bawah ini:")
 
-input_text = st.text_area("📝 Komentar TikTok", height=200)
+input_text = st.text_area("📝 Masukkan Komentar TikTok:", height=200)
 
 if st.button("🔍 Deteksi"):
     try:
@@ -79,9 +78,9 @@ if st.button("🔍 Deteksi"):
         confidence_hate = probs[0][1].item()
 
         if pred == 0:
-            st.success(f"✅ Tidak Mengandung Kebencian ({confidence_no_hate:.2f})")
+            st.success(f"✅ Komentar **Tidak Mengandung Kebencian** (Confidence {confidence_no_hate:.2f})")
         else:
-            st.error(f"❌ Mengandung Ujaran Kebencian ({confidence_hate:.2f})")
+            st.error(f"❌ Komentar **Mengandung Ujaran Kebencian** (Confidence {confidence_hate:.2f})")
 
     except Exception:
         st.error("❌ Terjadi error saat deteksi.")
